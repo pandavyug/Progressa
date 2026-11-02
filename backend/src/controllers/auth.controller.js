@@ -60,11 +60,15 @@ async function registerUser(req, res) {
     },
     process.env.JWT_SECRET,
     {
-        expiresIn: "1h",
-    }
+      expiresIn: "1h",
+    },
   );
 
-  res.cookie("token", token);
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
 
   res.status(201).json({
     success: true,
@@ -102,11 +106,15 @@ async function loginUser(req, res) {
     },
     process.env.JWT_SECRET,
     {
-        expiresIn: "1h",
-    }
+      expiresIn: "1h",
+    },
   );
 
-  res.cookie("token", token);
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
 
   res.status(200).json({
     success: true,
@@ -120,9 +128,8 @@ async function loginUser(req, res) {
   });
 }
 
-
 async function logoutUser(req, res) {
-    res.clearCookie("token")
-    res.status(200).json({ message: "User logged out successfully" })
+  res.clearCookie("token");
+  res.status(200).json({ message: "User logged out successfully" });
 }
 module.exports = { registerUser, loginUser, logoutUser };

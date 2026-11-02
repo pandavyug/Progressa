@@ -1,4 +1,4 @@
-
+import { API } from "../config/api.js";
 import { useState } from "react";
 import { Link,useNavigate } from "react-router-dom";
 import {
@@ -81,7 +81,7 @@ const Register = () => {
       setSuccess("");
 
       const response = await fetch(
-        "http://localhost:2108/auth/register",
+        `${API}/auth/register`,
         {
           method: "POST",
           credentials: "include",

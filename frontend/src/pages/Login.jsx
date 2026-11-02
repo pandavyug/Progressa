@@ -1,4 +1,4 @@
-
+import { API } from "../config/api.js";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -57,7 +57,7 @@ const Login = () => {
       setErrors({});
 
       const response = await fetch(
-        "http://localhost:2108/auth/login",
+        `${API}/auth/login`,
         {
           method: "POST",
           credentials: "include",

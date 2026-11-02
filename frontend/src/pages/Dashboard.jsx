@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import {API} from "../config/api.js";
 import {
   Layers3,
   CircleCheck,
@@ -18,7 +19,7 @@ import {
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
-const API_URL = "http://localhost:2108";
+const API_URL = `${API}`;
 
 const parseDate = (value) => {
   if (!value) return null;

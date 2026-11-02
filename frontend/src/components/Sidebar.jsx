@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
+import { API } from "../config/api.js"; 
 import {
   LayoutDashboard,
   CheckSquare,
@@ -26,7 +27,7 @@ const Sidebar = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:2108/auth/logout", {
+      const response = await fetch(`${API}/auth/logout`, {
         method: "POST",
         credentials: "include"
       });

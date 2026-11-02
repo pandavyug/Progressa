@@ -1,4 +1,4 @@
-
+import { API } from "../config/api.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -20,7 +20,6 @@ import {
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
-const API = "http://localhost:2108";
 
 const Settings = () => {
   const navigate = useNavigate();

@@ -1,4 +1,4 @@
-
+import { API } from "../config/api.js";
 import { useEffect, useState } from "react";
 import {
   Search,
@@ -18,7 +18,7 @@ import {
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
-const API_URL = "http://localhost:2108";
+const API_URL = `${API}`;
 
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);

@@ -1,4 +1,4 @@
-
+import { API } from "../config/api.js";
 import { useEffect, useMemo, useState } from "react";
 import {
   BarChart3,
@@ -14,7 +14,6 @@ import {
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
-const API = "http://localhost:2108";
 
 const Reports = () => {
   const [tasks, setTasks] = useState([]);

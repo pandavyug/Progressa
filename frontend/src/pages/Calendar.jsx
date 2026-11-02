@@ -1,4 +1,4 @@
-
+import { API } from "../config/api.js";
 import { useEffect, useMemo, useState } from "react";
 import {
   ChevronLeft,
@@ -18,7 +18,7 @@ import {
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
-const API_URL = "http://localhost:2108";
+const API_URL = `${API}`;
 
 // Format date as YYYY-MM-DD using local date
 const formatDate = (date) => {

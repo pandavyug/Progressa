@@ -67,7 +67,7 @@ async function createTask(req, res) {
       return FinalDate;
     }
 
-    const CreatedAt = dateGenrater();
+    const CreatedAt = dateGenerater();
 
     const taskStatus = Status || "Pending";
     const taskPriority = Priority || "Medium";

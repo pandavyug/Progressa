@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {API} from "../config/api.js";
 import {
   Layers3,
@@ -18,6 +19,8 @@ import {
 
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
+
+const navigate = useNavigate();
 
 const API_URL = `${API}`;
 

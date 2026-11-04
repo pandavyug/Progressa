@@ -50,7 +50,7 @@ const Sidebar = () => {
 
         {/* Logo */}
 
-        <div className="flex h-[85px] items-center px-7">
+        <div className="flex h-[85px] items-center border-b border-white/10 px-7">
           <img
             src={Logo}
             alt="Progressa"

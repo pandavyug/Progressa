@@ -1,5 +1,4 @@
 import { API } from "../config/api.js";
-import Toast from "../components/Toast";
 import { useEffect, useState } from "react";
 import {
   Search,
@@ -39,9 +38,6 @@ const Tasks = () => {
 
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-
-  const [toast, setToast] = useState(null);
-const [showDeletePopup, setShowDeletePopup] = useState(false);
 
   // Get logged-in user
   useEffect(() => {
@@ -89,7 +85,6 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
     fetchTasks();
   }, []);
 
-  
   // Open task popup and fetch complete task details
   const openTaskPopup = async (task) => {
     setSelectedTask(task);
@@ -122,10 +117,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
         Due_date: fullTask.Due_date || "",
       });
     } catch (err) {
-      setToast({
-        type: "error",
-        message: err.message || "Unable to fetch task details.",
-      });
+      alert(err.message);
       setSelectedTask(null);
     } finally {
       setPopupLoading(false);
@@ -148,7 +140,6 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
     }));
   };
 
- 
   // Update task using PUT
   const updateTask = async () => {
     try {
@@ -181,24 +172,22 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
 
       await fetchTasks();
 
-      setToast({
-        type: "success",
-        message: "Task updated successfully!",
-      });
+      alert("Task updated successfully!");
     } catch (err) {
-      setToast({
-        type: "error",
-        message: err.message || "Unable to update task.",
-      });
+      alert(err.message);
     } finally {
       setSaving(false);
     }
   };
 
-
- 
-  // Delete task after confirmation
+  // Delete task
   const deleteTask = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this task?"
+    );
+
+    if (!confirmDelete) return;
+
     try {
       setDeleting(true);
 
@@ -220,25 +209,14 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
         prev.filter((task) => task.T_id !== selectedTask.T_id)
       );
 
-      setShowDeletePopup(false);
       closePopup();
-
-      setToast({
-        type: "success",
-        message: "Task deleted successfully!",
-      });
+      alert("Task deleted successfully!");
     } catch (err) {
-      setShowDeletePopup(false);
-
-      setToast({
-        type: "error",
-        message: err.message || "Unable to delete task.",
-      });
+      alert(err.message);
     } finally {
       setDeleting(false);
     }
   };
-
 
   // Status colors
   const getStatusStyle = (status) => {
@@ -291,7 +269,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
             onSearch={setSearch}
           />
 
-          <main className="p-5 md:p-8 mt-16">
+          <main className="p-5 md:p-8 mt-25">
             {/* Page Header */}
             <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <div>
@@ -666,7 +644,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
                 {!popupLoading && (
                   <div className="mt-8 flex flex-wrap justify-between gap-3 border-t border-gray-100 pt-5">
                     <button
-                      onClick={() => setShowDeletePopup(true)}
+                      onClick={deleteTask}
                       disabled={deleting || isEditing}
                       className="flex items-center gap-2 rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50"
                     >
@@ -719,94 +697,6 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
           </div>
         </div>
       )}
-      
-      {/* Delete Task Confirmation Popup */}
-      {showDeletePopup && (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
-          onClick={() => !deleting && setShowDeletePopup(false)}
-        >
-          <div
-            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mb-5 flex items-center justify-between">
-              <div className="rounded-xl bg-red-50 p-3 text-[#BA181B]">
-                <AlertCircle size={25} />
-              </div>
-
-              <button
-                type="button"
-                disabled={deleting}
-                onClick={() => setShowDeletePopup(false)}
-                className="rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <h2 className="text-xl font-extrabold text-[#161A1D]">
-              Delete This Task?
-            </h2>
-
-            <p className="mt-3 text-sm leading-6 text-gray-500">
-              Are you sure you want to permanently delete this task? This
-              action cannot be undone.
-            </p>
-
-            <div className="mt-4 rounded-xl bg-red-50 p-4">
-              <p className="text-sm font-semibold text-[#BA181B]">
-                Warning:
-              </p>
-
-              <p className="mt-1 text-xs leading-5 text-red-700">
-                This task will be permanently deleted from your Progressa
-                workspace.
-              </p>
-            </div>
-
-            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-              <button
-                type="button"
-                disabled={deleting}
-                onClick={() => setShowDeletePopup(false)}
-                className="rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-50 disabled:opacity-60"
-              >
-                Cancel
-              </button>
-
-              <button
-                type="button"
-                disabled={deleting}
-                onClick={deleteTask}
-                className="flex items-center justify-center gap-2 rounded-xl bg-[#BA181B] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#660708] disabled:opacity-60"
-              >
-                {deleting ? (
-                  <>
-                    <Loader2 size={17} className="animate-spin" />
-                    Deleting...
-                  </>
-                ) : (
-                  <>
-                    <Trash2 size={17} />
-                    Yes, Delete Task
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Toast Notification */}
-      {toast && (
-        <Toast
-          type={toast.type}
-          message={toast.message}
-          onClose={() => setToast(null)}
-        />
-      )}
-
     </>
   );
 };

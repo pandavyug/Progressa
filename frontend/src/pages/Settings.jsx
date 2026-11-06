@@ -1,4 +1,5 @@
 import { API } from "../config/api.js";
+import Toast from "../components/Toast";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -20,7 +21,6 @@ import {
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
-
 const Settings = () => {
   const navigate = useNavigate();
 
@@ -35,30 +35,51 @@ const Settings = () => {
   const [loading, setLoading] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [toast, setToast] = useState(null);
 
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
   const [showDeletePopup, setShowDeletePopup] = useState(false);
 
   // Load logged-in user information
+
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-
-    if (storedUser) {
+    const fetchUser = async () => {
       try {
-        const parsedUser = JSON.parse(storedUser);
-
-        setUser(parsedUser);
-
-        setFormData({
-          U_name: parsedUser.U_name || "",
-          Email: parsedUser.Email || "",
-          Phone: parsedUser.Phone || "",
+        const response = await fetch(`${API}/user/getUserById`, {
+          method: "GET",
+          credentials: "include",
         });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Unable to fetch user information.");
+        }
+
+        if (data.User) {
+          // Avoid storing the password hash in localStorage
+          const { Password, ...safeUser } = data.User;
+
+          setUser(safeUser);
+
+          setFormData({
+            U_name: safeUser.U_name || "",
+            Email: safeUser.Email || "",
+            Phone: safeUser.Phone || "",
+          });
+
+          // Keep local user information updated
+          localStorage.setItem("user", JSON.stringify(safeUser));
+        }
       } catch (error) {
-        console.error("Unable to read user information.");
+        console.error("Unable to fetch user:", error);
+        setToast({
+          type: "error",
+          message: error.message || "Unable to load profile information.",
+        });
       }
-    }
+    };
+
+    fetchUser();
   }, []);
 
   // Handle form input changes
@@ -76,7 +97,6 @@ const Settings = () => {
     e.preventDefault();
 
     setLoading(true);
-    setMessage("");
     setError("");
 
     try {
@@ -116,9 +136,15 @@ const Settings = () => {
         });
       }
 
-      setMessage(data.message || "Profile updated successfully!");
+      setToast({
+        type: "success",
+        message: data.message || "Profile updated successfully!",
+      });
     } catch (error) {
-      setError(error.message || "Something went wrong.");
+      setToast({
+        type: "error",
+        message: error.message || "Something went wrong.",
+      });
     } finally {
       setLoading(false);
     }
@@ -129,8 +155,7 @@ const Settings = () => {
     setLoggingOut(true);
 
     // Clear the login cookie
-    document.cookie =
-      "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
     // Remove saved user information
     localStorage.removeItem("user");
@@ -162,7 +187,10 @@ const Settings = () => {
 
       navigate("/register", { replace: true });
     } catch (error) {
-      setError(error.message || "Something went wrong.");
+      setToast({
+        type: "error",
+        message: error.message || "Something went wrong.",
+      });
       setShowDeletePopup(false);
     } finally {
       setDeleting(false);
@@ -178,7 +206,6 @@ const Settings = () => {
           <Navbar userName={user?.U_name || ""} />
 
           <main className="p-5 sm:p-8">
-
             {/* Page Heading */}
             <div className="mb-8">
               <div className="flex items-center gap-3">
@@ -198,25 +225,11 @@ const Settings = () => {
               </div>
             </div>
 
-            {/* Success Message */}
-            {message && (
-              <div className="mb-6 rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-medium text-green-700">
-                {message}
-              </div>
-            )}
-
-            {/* Error Message */}
-            {error && (
-              <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700">
-                {error}
-              </div>
-            )}
+            
 
             <div className="mx-auto max-w-4xl space-y-7">
-
               {/* Profile Information */}
               <section className="overflow-hidden rounded-2xl bg-white shadow-sm">
-
                 <div className="border-b border-gray-100 p-6">
                   <div className="flex items-center gap-3">
                     <div className="rounded-xl bg-red-50 p-3 text-[#BA181B]">
@@ -236,7 +249,6 @@ const Settings = () => {
                 </div>
 
                 <form onSubmit={handleUpdate} className="space-y-5 p-6">
-
                   {/* Full Name */}
                   <div>
                     <label className="mb-2 block text-sm font-semibold text-[#161A1D]">
@@ -334,7 +346,6 @@ const Settings = () => {
 
               {/* Account Information */}
               <section className="rounded-2xl bg-white p-6 shadow-sm">
-
                 <div className="mb-6 flex items-center gap-3">
                   <div className="rounded-xl bg-blue-50 p-3 text-blue-600">
                     <ShieldCheck size={22} />
@@ -352,13 +363,10 @@ const Settings = () => {
                 </div>
 
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-
                   <div className="rounded-xl bg-[#F5F3F4]/70 p-4">
                     <div className="flex items-center gap-2 text-gray-500">
                       <Hash size={16} />
-                      <span className="text-xs font-semibold">
-                        User ID
-                      </span>
+                      <span className="text-xs font-semibold">User ID</span>
                     </div>
 
                     <p className="mt-2 text-lg font-bold text-[#161A1D]">
@@ -378,13 +386,11 @@ const Settings = () => {
                       {user?.CreatedAt || "Not available"}
                     </p>
                   </div>
-
                 </div>
               </section>
 
               {/* Logout Section */}
               <section className="rounded-2xl bg-white p-6 shadow-sm">
-
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <div className="rounded-xl bg-orange-50 p-3 text-orange-600">
@@ -392,9 +398,7 @@ const Settings = () => {
                     </div>
 
                     <div>
-                      <h2 className="font-bold text-[#161A1D]">
-                        Logout
-                      </h2>
+                      <h2 className="font-bold text-[#161A1D]">Logout</h2>
 
                       <p className="mt-1 text-xs text-gray-500">
                         Sign out of your Progressa account.
@@ -416,7 +420,6 @@ const Settings = () => {
 
               {/* Delete Account Section */}
               <section className="rounded-2xl border border-red-100 bg-white p-6 shadow-sm">
-
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <div className="rounded-xl bg-red-50 p-3 text-[#BA181B]">
@@ -444,7 +447,6 @@ const Settings = () => {
                   </button>
                 </div>
               </section>
-
             </div>
           </main>
         </div>
@@ -485,13 +487,11 @@ const Settings = () => {
             </p>
 
             <div className="mt-4 rounded-xl bg-red-50 p-4">
-              <p className="text-sm font-semibold text-[#BA181B]">
-                Warning:
-              </p>
+              <p className="text-sm font-semibold text-[#BA181B]">Warning:</p>
 
               <p className="mt-1 text-xs leading-5 text-red-700">
-                Your account and all tasks created by you will be deleted.
-                You will not be able to recover this information.
+                Your account and all tasks created by you will be deleted. You
+                will not be able to recover this information.
               </p>
             </div>
 
@@ -527,6 +527,14 @@ const Settings = () => {
           </div>
         </div>
       )}
+      {/* Toast Notification */}
+{toast && (
+  <Toast
+    type={toast.type}
+    message={toast.message}
+    onClose={() => setToast(null)}
+  />
+)}
     </>
   );
 };

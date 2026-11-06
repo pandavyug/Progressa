@@ -5,6 +5,7 @@ const updateUserValidationRules = require("../middleware/validation.middleware")
 const router = express.Router()
 
 router.get("/getAllUsers",authmiddleware.authenticateToken,userController.getAllUsers)
+router.get("/getUserById",authmiddleware.authenticateToken,userController.getUserById)
 router.put("/updateUserById",authmiddleware.authenticateToken,updateUserValidationRules,userController.updateUserById)
 router.delete("/deleteUserById",authmiddleware.authenticateToken,userController.deleteUserByID)
 

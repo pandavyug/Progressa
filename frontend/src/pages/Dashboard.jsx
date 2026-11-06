@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../config/api.js";
-
-
 import {
   Layers3,
   CircleCheck,

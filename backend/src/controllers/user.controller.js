@@ -17,6 +17,29 @@ async function getAllUsers(req,res) {
     }
 }
 
+async function getUserById(req,res) {
+    try{
+        const U_id = req.user.U_id
+
+        const user = await User.findOne({U_id:U_id})
+        if(!user){
+            return res.status(404).json({
+                message:"User not Found"
+            })
+        }
+
+        res.status(200).json({
+            message:"User Data",
+            User:user
+        })
+    }
+    catch(error){
+        res.status(400).json({
+            message:error.message
+        })
+    }
+}
+
 async function updateUserById(req,res){
     try{
         const {U_name,Email,Phone,} = req.body
@@ -89,6 +112,6 @@ async function deleteUserByID(req,res) {
     
 }
 
-module.exports = {getAllUsers,updateUserById,deleteUserByID}
+module.exports = {getAllUsers,getUserById,updateUserById,deleteUserByID}
 
 

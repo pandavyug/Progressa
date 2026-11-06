@@ -337,7 +337,7 @@ const Dashboard = () => {
 
         {/* Main content */}
 
-        <main className="ml-[235px] pt-[85px]">
+        <main className="ml-0 pt-[85px] md:ml-[235px]">
           <div className="mx-auto max-w-[1800px] space-y-6 p-6 lg:p-8">
             {/* Heading */}
 

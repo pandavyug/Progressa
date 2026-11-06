@@ -5,6 +5,7 @@ import {
   X,
   Plus,
   Loader2,
+  Menu,
 } from "lucide-react";
 import { API } from "../config/api.js";
 import Toast from "./Toast";
@@ -102,16 +103,25 @@ const Navbar = ({ userName, onTaskCreated }) => {
 
   return (
     <>
-      <header className="fixed right-0  top-0 z-30 flex h-[85px] w-full items-center justify-end border-b border-[#D3D3D3]/60 bg-white/95 px-8 backdrop-blur-md">
+      <header className="fixed right-0 top-0 z-30 flex h-[85px] w-full items-center justify-between border-b border-[#D3D3D3]/60 bg-white/95 px-3 backdrop-blur-md sm:px-8 md:justify-end">
 
+        {/* Mobile Sidebar Toggle */}
+<button
+  type="button"
+  onClick={() => window.dispatchEvent(new Event("progressa:toggle-sidebar"))}
+  className="rounded-lg p-2 text-[#161A1D] transition hover:bg-[#F5F3F4] md:hidden"
+  aria-label="Open sidebar"
+>
+  <Menu size={25} />
+</button>
         {/* Right section */}
-        <div className="flex shrink-0 items-center gap-5">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-5">
 
           {/* Add Task Button */}
           <button
             type="button"
             onClick={() => setShowTaskPopup(true)}
-            className="flex items-center gap-2 rounded-xl bg-[#BA181B] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#A4161A] active:scale-95"
+            className="flex items-center gap-2 rounded-xl bg-[#BA181B] px-3 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-[#A4161A] active:scale-95 sm:px-4 sm:text-sm"
           >
             <Plus size={18} />
             <span>Add Task</span>
@@ -128,14 +138,14 @@ const Navbar = ({ userName, onTaskCreated }) => {
           </button>
 
           {/* User */}
-          <div className="flex items-center gap-3 border-l border-[#D3D3D3] pl-6">
+          <div className="flex items-center gap-1 border-l border-[#D3D3D3] pl-2 sm:gap-3 sm:pl-6">
 
             <div className="min-w-0 text-right">
-              <p className="max-w-[160px] truncate text-sm font-bold text-[#161A1D]">
+              <p className="max-w-[75px] truncate text-xs font-bold text-[#161A1D] sm:max-w-[160px] sm:text-sm">
                 {userName || "Welcome"}
               </p>
 
-              <p className="text-[10px] font-medium text-[#B1A7A6]">
+              <p className="hidden text-[10px] font-medium text-[#B1A7A6] sm:block">
                 Progressa User
               </p>
             </div>

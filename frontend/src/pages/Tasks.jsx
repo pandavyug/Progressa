@@ -41,7 +41,7 @@ const Tasks = () => {
   const [deleting, setDeleting] = useState(false);
 
   const [toast, setToast] = useState(null);
-const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
 
   // Get logged-in user
   useEffect(() => {
@@ -58,18 +58,18 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
   }, []);
 
   // Fetch all tasks
-  const fetchTasks = async () => {
+  const fetchTasks = async (showLoader = true) => {
     try {
-      setLoading(true);
+      if (showLoader) {
+        setLoading(true);
+      }
+
       setError("");
 
-      const response = await fetch(
-        `${API_URL}/task/getAllTasks`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${API_URL}/task/getAllTasks`, {
+        method: "GET",
+        credentials: "include",
+      });
 
       const data = await response.json();
 
@@ -81,7 +81,9 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
     } catch (err) {
       setError(err.message || "Something went wrong.");
     } finally {
-      setLoading(false);
+      if (showLoader) {
+        setLoading(false);
+      }
     }
   };
 
@@ -89,7 +91,6 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
     fetchTasks();
   }, []);
 
-  
   // Open task popup and fetch complete task details
   const openTaskPopup = async (task) => {
     setSelectedTask(task);
@@ -97,13 +98,10 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
     setIsEditing(false);
 
     try {
-      const response = await fetch(
-        `${API_URL}/task/getTaskById/${task.T_id}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${API_URL}/task/getTaskById/${task.T_id}`, {
+        method: "GET",
+        credentials: "include",
+      });
 
       const data = await response.json();
 
@@ -148,7 +146,6 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
     }));
   };
 
- 
   // Update task using PUT
   const updateTask = async () => {
     try {
@@ -163,7 +160,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
           },
           credentials: "include",
           body: JSON.stringify(editForm),
-        }
+        },
       );
 
       const data = await response.json();
@@ -195,8 +192,6 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
     }
   };
 
-
- 
   // Delete task after confirmation
   const deleteTask = async () => {
     try {
@@ -207,7 +202,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
         {
           method: "DELETE",
           credentials: "include",
-        }
+        },
       );
 
       const data = await response.json();
@@ -217,7 +212,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
       }
 
       setTasks((prev) =>
-        prev.filter((task) => task.T_id !== selectedTask.T_id)
+        prev.filter((task) => task.T_id !== selectedTask.T_id),
       );
 
       setShowDeletePopup(false);
@@ -238,7 +233,6 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
       setDeleting(false);
     }
   };
-
 
   // Status colors
   const getStatusStyle = (status) => {
@@ -271,7 +265,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
   // Filter tasks
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch = task.Title?.toLowerCase().includes(
-      search.toLowerCase()
+      search.toLowerCase(),
     );
 
     const matchesStatus =
@@ -286,10 +280,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
         <Sidebar />
 
         <div className="md:ml-64">
-          <Navbar
-            userName={userName}
-            onSearch={setSearch}
-          />
+          <Navbar userName={userName} onSearch={() => fetchTasks(false)} />
 
           <main className="p-5 md:p-8 mt-16">
             {/* Page Header */}
@@ -344,7 +335,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
                     >
                       {status}
                     </button>
-                  )
+                  ),
                 )}
               </div>
             </div>
@@ -352,17 +343,11 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
             {/* Task Cards */}
             {loading ? (
               <div className="flex justify-center py-20">
-                <Loader2
-                  size={35}
-                  className="animate-spin text-[#BA181B]"
-                />
+                <Loader2 size={35} className="animate-spin text-[#BA181B]" />
               </div>
             ) : error ? (
               <div className="rounded-xl bg-white p-8 text-center">
-                <AlertCircle
-                  size={35}
-                  className="mx-auto mb-3 text-red-500"
-                />
+                <AlertCircle size={35} className="mx-auto mb-3 text-red-500" />
 
                 <p className="font-medium text-red-600">{error}</p>
 
@@ -375,10 +360,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
               </div>
             ) : filteredTasks.length === 0 ? (
               <div className="rounded-2xl bg-white px-5 py-16 text-center shadow-sm">
-                <ListTodo
-                  size={45}
-                  className="mx-auto mb-4 text-gray-300"
-                />
+                <ListTodo size={45} className="mx-auto mb-4 text-gray-300" />
 
                 <h3 className="text-lg font-semibold text-[#161A1D]">
                   No Tasks Found
@@ -405,7 +387,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusStyle(
-                          task.Status
+                          task.Status,
                         )}`}
                       >
                         {task.Status}
@@ -413,7 +395,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
 
                       <span
                         className={`flex items-center gap-1 text-xs font-semibold ${getPriorityStyle(
-                          task.Priority
+                          task.Priority,
                         )}`}
                       >
                         <Flag size={13} />
@@ -445,9 +427,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
           >
             {/* Popup Header */}
             <div className="sticky top-0 flex items-center justify-between border-b border-gray-100 bg-white px-6 py-5">
-              <h2 className="text-xl font-bold text-[#161A1D]">
-                Task Details
-              </h2>
+              <h2 className="text-xl font-bold text-[#161A1D]">Task Details</h2>
 
               <button
                 onClick={closePopup}
@@ -459,10 +439,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
 
             {popupLoading ? (
               <div className="flex justify-center py-20">
-                <Loader2
-                  size={35}
-                  className="animate-spin text-[#BA181B]"
-                />
+                <Loader2 size={35} className="animate-spin text-[#BA181B]" />
               </div>
             ) : (
               <div className="p-6">
@@ -476,7 +453,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
                     <div className="mb-6 flex flex-wrap gap-3">
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusStyle(
-                          selectedTask.Status
+                          selectedTask.Status,
                         )}`}
                       >
                         {selectedTask.Status}
@@ -484,7 +461,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
 
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-semibold ${getPriorityStyle(
-                          selectedTask.Priority
+                          selectedTask.Priority,
                         )} bg-gray-50`}
                       >
                         {selectedTask.Priority} Priority
@@ -498,7 +475,8 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
                         </p>
 
                         <p className="whitespace-pre-wrap text-sm leading-6 text-gray-700">
-                          {selectedTask.Description || "No description available."}
+                          {selectedTask.Description ||
+                            "No description available."}
                         </p>
                       </div>
 
@@ -572,7 +550,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
                           <p className="text-sm font-medium text-gray-700">
                             {selectedTask.CompletedAt
                               ? new Date(
-                                  selectedTask.CompletedAt
+                                  selectedTask.CompletedAt,
                                 ).toLocaleString()
                               : "Not completed"}
                           </p>
@@ -675,7 +653,6 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
                       ) : (
                         <Trash2 size={17} />
                       )}
-
                       Delete
                     </button>
 
@@ -707,7 +684,6 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
                           ) : (
                             <Save size={17} />
                           )}
-
                           Save Changes
                         </button>
                       </div>
@@ -719,7 +695,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
           </div>
         </div>
       )}
-      
+
       {/* Delete Task Confirmation Popup */}
       {showDeletePopup && (
         <div
@@ -750,14 +726,12 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
             </h2>
 
             <p className="mt-3 text-sm leading-6 text-gray-500">
-              Are you sure you want to permanently delete this task? This
-              action cannot be undone.
+              Are you sure you want to permanently delete this task? This action
+              cannot be undone.
             </p>
 
             <div className="mt-4 rounded-xl bg-red-50 p-4">
-              <p className="text-sm font-semibold text-[#BA181B]">
-                Warning:
-              </p>
+              <p className="text-sm font-semibold text-[#BA181B]">Warning:</p>
 
               <p className="mt-1 text-xs leading-5 text-red-700">
                 This task will be permanently deleted from your Progressa
@@ -806,7 +780,6 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
           onClose={() => setToast(null)}
         />
       )}
-
     </>
   );
 };

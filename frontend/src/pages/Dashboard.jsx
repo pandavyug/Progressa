@@ -333,7 +333,7 @@ const Dashboard = () => {
       <div className="min-h-screen bg-[#F5F3F4] font-['Raleway',sans-serif]">
         <Sidebar />
 
-        <Navbar userName={userName} onSearch={setSearch} />
+        <Navbar userName={userName} />
 
         {/* Main content */}
 

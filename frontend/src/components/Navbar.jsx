@@ -9,7 +9,7 @@ import {
 import { API } from "../config/api.js";
 import Toast from "./Toast";
 
-const Navbar = ({ userName, onSearch, onTaskCreated }) => {
+const Navbar = ({ userName, onTaskCreated }) => {
   const [showTaskPopup, setShowTaskPopup] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -23,10 +23,6 @@ const Navbar = ({ userName, onSearch, onTaskCreated }) => {
     Due_date: "",
   });
 
-  const handleSearch = (value) => {
-    setSearch(value);
-    onSearch?.(value);
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -81,7 +77,7 @@ const Navbar = ({ userName, onSearch, onTaskCreated }) => {
       }
 
       closePopup();
-      onTaskCreated?.();
+      await onTaskCreated?.();
 
       setToast({
         type: "success",
@@ -106,7 +102,7 @@ const Navbar = ({ userName, onSearch, onTaskCreated }) => {
 
   return (
     <>
-      <header className="fixed left-[235px] right-0 top-0 z-30 flex h-[85px] items-center justify-start border-b border-[#D3D3D3]/60 bg-white/95 px-8 backdrop-blur-md">
+      <header className="fixed right-0  top-0 z-30 flex h-[85px] w-full items-center justify-end border-b border-[#D3D3D3]/60 bg-white/95 px-8 backdrop-blur-md">
 
         {/* Right section */}
         <div className="flex shrink-0 items-center gap-5">

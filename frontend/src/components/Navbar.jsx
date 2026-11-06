@@ -1,7 +1,5 @@
-
 import { useState } from "react";
 import {
-  Search,
   Bell,
   ChevronDown,
   X,
@@ -12,7 +10,6 @@ import { API } from "../config/api.js";
 import Toast from "./Toast";
 
 const Navbar = ({ userName, onSearch, onTaskCreated }) => {
-  const [search, setSearch] = useState("");
   const [showTaskPopup, setShowTaskPopup] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -109,10 +106,10 @@ const Navbar = ({ userName, onSearch, onTaskCreated }) => {
 
   return (
     <>
-      <header className="fixed left-[235px] right-0 top-0 z-30 flex h-[85px] items-center justify-between border-b border-[#D3D3D3]/60 bg-white/95 px-8 backdrop-blur-md">
+      <header className="fixed left-[235px] right-0 top-0 z-30 flex h-[85px] items-center justify-start border-b border-[#D3D3D3]/60 bg-white/95 px-8 backdrop-blur-md">
 
         {/* Right section */}
-        <div className="ml-6 flex shrink-0 items-center gap-5">
+        <div className="flex shrink-0 items-center gap-5">
 
           {/* Add Task Button */}
           <button

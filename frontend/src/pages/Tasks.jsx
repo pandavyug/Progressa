@@ -280,7 +280,7 @@ const Tasks = () => {
         <Sidebar />
 
         <div className="md:ml-64">
-          <Navbar userName={userName} onSearch={() => fetchTasks(false)} />
+          <Navbar userName={userName} onTaskCreated={() => fetchTasks(false)} />
 
           <main className="p-5 md:p-8 mt-16">
             {/* Page Header */}
